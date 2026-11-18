@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>拖拉机 · 巨大化播种验证</title><link rel="stylesheet" href="./style.css"></head><body>
+<header class="topbar">
+ <div class="brand"><span class="brand-icon">✳</span><h1>巨大化播种验证</h1><span class="brand-caption">TRACTOR · CROP LAB</span></div>
+ <div class="header-actions"><span class="source-badge"><span class="live-dot"></span>Mod Lua <button id="source-button" class="version" title="查看算法来源">读取中…</button></span><button id="import" class="secondary">导入场景</button><input id="file" type="file" accept=".json,application/json" hidden><button id="export" class="secondary" disabled>导出 JSON ↓</button><button id="details-button" class="secondary">说明与明细</button></div>
+</header>
+<main class="workspace">
+ <aside class="controls">
+  <section class="panel settings" aria-label="农田设置">
+   <div class="season-setting"><span class="setting-label">季节</span><div id="seasons" class="seasons"><span class="muted">正在读取季节…</span></div></div>
+   <div class="settings-selects"><label>策略 <select id="strategy" aria-label="巨大化播种策略"><option value="GIANT_TEMPLATE">巨大化·模版</option><option value="GIANT">巨大化·最优</option></select></label><label class="template-setting">模版 <select id="template-id" aria-label="锁定模版编号"><option value="">自动整块选配</option></select></label></div>
+   <div class="field-line"><label>宽 <input id="width" type="number" min="1" value="2" aria-label="农田宽度"></label><span class="times">×</span><label>高 <input id="height" type="number" min="1" value="2" aria-label="农田高度"></label><span id="farm-count" class="muted"></span></div>
+   <div class="edit-tools"><button id="edit-button" class="secondary">✎ 编辑地皮</button><button id="start-button" class="secondary">⚑ 设置起点</button></div>
+   <div class="settings-notes"><span id="strategy-limit" class="micro"></span><span id="edit-tip" class="micro">每块地皮3×3坑，可编辑不规则范围。</span></div>
+  </section>
+  <section class="panel seed-panel"><div class="section-heading"><h2>种子库存与使用</h2><span id="seed-count" class="muted"></span></div><div class="seed-actions"><span class="muted">点击作物聚焦</span><button id="clear-seeds" class="text-button">清空</button><button id="season-seeds" class="text-button">应季各40</button></div><table class="inventory-table" aria-label="种子库存和使用统计"><thead><tr><th scope="col">作物</th><th scope="col">库存</th><th scope="col">已用</th><th scope="col">剩余</th></tr></thead><tbody id="seeds"><tr><td colspan="4" class="muted">正在读取作物…</td></tr></tbody></table><p id="stock-note" class="micro">非当季种子保留在库存中。</p></section>
+
+  <div id="connection-note" class="connection-note" role="status" hidden><span id="connection-text"></span><button id="retry-connection" class="text-button">重新连接</button></div>
+  <div class="run-bar"><button id="run" class="primary" disabled><span>生成播种布局</span><span>→</span></button><button id="cancel" class="cancel" hidden>取消计算</button></div>
+ </aside>
+ <section class="results" aria-label="农田播种布局">
+  <div class="stats"><div class="stat"><span>播种</span><strong id="stat-planted">—</strong><small id="stat-bound">等待生成方案</small></div><div class="stat"><span>剩余种子</span><strong id="stat-seeds">—</strong></div><div class="stat"><span>空坑</span><strong id="stat-holes">—</strong><small id="stat-tiles">所选农田范围内</small></div><div class="stat"><span>同族检查</span><strong id="stat-family">—</strong></div></div>
+  <div class="timing-line" aria-live="polite"><span id="status-detail">选择参数后点击生成</span></div>
+  <div class="map-panel"><div class="map-toolbar"><div class="toolbar-left"><span id="plan-status" class="status neutral">等待生成</span></div><div class="zoom-tools"><button id="zoom-out" aria-label="缩小">−</button><output id="zoom-label" aria-label="画布缩放比例">100%</output><button id="zoom-in" aria-label="放大">＋</button><button id="fit" aria-pressed="false">完整农田</button><button id="detail-view" aria-pressed="true">清晰查看</button></div></div><div id="map-stage" class="map-stage"><svg id="map" xmlns="http://www.w3.org/2000/svg" role="group" aria-label="农田与播种布局"></svg></div><div class="map-footer"><span><i class="giant-marker"></i>巨大化预期 <i class="mature-marker"></i>成熟 <i class="empty-pit"></i>空坑 <i class="start-marker"></i>起点</span><span id="map-hint">拖动画布可平移，点击作物可聚焦</span></div></div>
+  <div id="message" class="message" hidden role="alert"></div>
+ </section>
+</main>
+<dialog id="details-dialog"><div class="dialog-head"><h2>说明与明细</h2><button id="close-details" aria-label="关闭说明与明细">×</button></div>  <section class="example-panel"><label for="example">验证场景</label><select id="example"><option value="">选择场景…</option></select></section>
+<details id="template-modules" class="micro" hidden></details><div id="validation-line" class="validation-line" hidden></div><p class="footnote">巨大化图标按应季、同族、逐格养分互补与密度判断；预期以全程水分、养分、照料达标且无杂草干扰为前提。<button id="source-link" class="text-button">查看代码一致性</button></p></dialog>
+<dialog id="source-dialog"><div class="dialog-head"><div><div class="eyebrow">SOURCE VERIFICATION</div><h2 id="source-title">算法来自 Mod 发布快照</h2></div><button id="close-dialog" aria-label="关闭">×</button></div><p id="source-description">浏览器通过 Lua 5.1 WebAssembly 执行随网页发布的原始 Lua 模块快照。以下哈希标识该发布快照；浏览器不会读取或检查本机安装的 Mod。</p><div id="source-summary" class="source-summary"></div><div id="source-files" class="source-files"></div><p class="micro">生成的 JSON 同时保存源码哈希，可用于复现本次结果。</p></dialog>
+<dialog id="export-dialog"><div class="dialog-head"><h2>导出验证结果</h2><button id="close-export" aria-label="关闭">×</button></div><p>选择需要保存的格式。</p><button id="download-full" class="export-choice"><strong>完整验证结果</strong><span>场景、实际坐标、原始代码哈希与校验结果</span></button><button id="download-planner" class="export-choice"><strong>饥荒农田规划器 JSON</strong><span>可导入 dst-farm-planner 对照布局</span></button><button id="download-scene" class="export-choice"><strong>仅保存输入场景</strong><span id="scene-recompute-note">下次导入后，用浏览器中的 Mod 发布快照重新计算</span></button></dialog>
+<script id="bootstrap-meta" type="application/json">null</script>
+<script src="./crop-display.js"></script>
+<script src="./canvas-viewport.js"></script>
+<script src="./browser-client.js"></script>
+<script src="./app.js"></script></body></html>

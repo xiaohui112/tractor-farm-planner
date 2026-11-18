@@ -1,0 +1,10 @@
+{
+  "lua": "5.1.5",
+  "lua_source_sha256": "2640fc56a795f29d28ef15e13c34a47e223960b0240e8cb0a82d9b0738695333",
+  "compiler": "emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 4.0.20 (6913738ec5371a88c4af5a80db0ab42bad3de681)",
+  "floating_point": "double Lua numbers; explicit float32 game query bindings; no fast-math",
+  "files": {
+    "lua51.mjs": "daf15fed070b5fc3675e063ac0c126ee4694351f873543199041f2972a641df1",
+    "lua51.wasm": "2d051e4e66086960df08cafb6a15652fd2cba1e48ba7a958358d4390fffd4ec2"
+  }
+}
